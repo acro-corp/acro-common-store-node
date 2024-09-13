@@ -69,10 +69,11 @@ const ActionSchema = z.object({
     .array(
       z.object({
         model: z.string(),
-        id: z.string(),
+        operation: z.string(), // create, update, delete, read
+        id: z.string().optional(),
         path: z.string().optional(),
-        from: z.any().optional(),
-        to: z.any(),
+        before: z.any().optional(),
+        after: z.any().optional(),
         meta: z.record(z.string(), z.any()).optional(),
       })
     )
