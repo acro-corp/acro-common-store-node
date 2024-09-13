@@ -18,6 +18,7 @@
 import { describe, expect, test } from "vitest";
 import {
   breakCircularReferences,
+  deepCompareObjects,
   get,
   removeSensitiveKeys,
 } from "../src/utils";
@@ -533,5 +534,113 @@ describe("get()", () => {
         (req: any) => req?.auth?.userId
       )
     ).toStrictEqual("2");
+  });
+});
+
+describe("deepCompareObjects", () => {
+  test("compares numbers", () => {
+    expect(deepCompareObjects(1, 1)).toStrictEqual(true);
+    expect(deepCompareObjects(1, 2)).toStrictEqual(false);
+  });
+
+  test("false w/ number & something else", () => {
+    expect(deepCompareObjects(1, null)).toStrictEqual(false);
+    expect(deepCompareObjects(1, NaN)).toStrictEqual(false);
+    expect(deepCompareObjects(1, "")).toStrictEqual(false);
+    expect(deepCompareObjects(1, undefined)).toStrictEqual(false);
+    expect(deepCompareObjects(1, [])).toStrictEqual(false);
+    expect(deepCompareObjects(1, {})).toStrictEqual(false);
+    expect(deepCompareObjects(0, null)).toStrictEqual(false);
+    expect(deepCompareObjects(0, NaN)).toStrictEqual(false);
+    expect(deepCompareObjects(0, "")).toStrictEqual(false);
+    expect(deepCompareObjects(0, undefined)).toStrictEqual(false);
+  });
+
+  test("compares strings", () => {
+    expect(deepCompareObjects("a", "a")).toStrictEqual(true);
+    expect(deepCompareObjects("a", "b")).toStrictEqual(false);
+  });
+
+  test("false w/ string & something else", () => {
+    expect(deepCompareObjects("a", null)).toStrictEqual(false);
+    expect(deepCompareObjects("a", NaN)).toStrictEqual(false);
+    expect(deepCompareObjects("a", "")).toStrictEqual(false);
+    expect(deepCompareObjects("a", undefined)).toStrictEqual(false);
+    expect(deepCompareObjects("a", [])).toStrictEqual(false);
+    expect(deepCompareObjects("a", {})).toStrictEqual(false);
+  });
+
+  test("compares nulls", () => {
+    expect(deepCompareObjects(null, null)).toStrictEqual(true);
+  });
+
+  test("false w/ null & something else", () => {
+    expect(deepCompareObjects(null, NaN)).toStrictEqual(false);
+    expect(deepCompareObjects(null, "")).toStrictEqual(false);
+    expect(deepCompareObjects(null, undefined)).toStrictEqual(false);
+    expect(deepCompareObjects(null, [])).toStrictEqual(false);
+    expect(deepCompareObjects(null, {})).toStrictEqual(false);
+  });
+
+  test("compares simple objects", () => {
+    expect(deepCompareObjects({}, {})).toStrictEqual(true);
+    expect(deepCompareObjects({ a: 1 }, { a: 1 })).toStrictEqual(true);
+    expect(deepCompareObjects({ a: 1, b: 2 }, { a: 1, b: 2 })).toStrictEqual(
+      true
+    );
+    expect(deepCompareObjects({ a: 1, b: 2 }, { b: 2, a: 1 })).toStrictEqual(
+      true
+    );
+    expect(deepCompareObjects({ a: 1 }, { a: 2 })).toStrictEqual(false);
+    expect(deepCompareObjects({ a: 1 }, { b: 1 })).toStrictEqual(false);
+    expect(deepCompareObjects({ a: 1 }, { a: 1, b: 2 })).toStrictEqual(false);
+    expect(deepCompareObjects({ a: 1, b: 2 }, { a: 1 })).toStrictEqual(false);
+  });
+
+  test("compares nested objects", () => {
+    expect(deepCompareObjects({ a: {} }, { a: {} })).toStrictEqual(true);
+    expect(deepCompareObjects({ a: { b: 1 } }, { a: { b: 1 } })).toStrictEqual(
+      true
+    );
+    expect(
+      deepCompareObjects({ a: { b: 1, c: {} } }, { a: { b: 1, c: {} } })
+    ).toStrictEqual(true);
+    expect(
+      deepCompareObjects({ a: { b: 1, c: {} } }, { a: { c: {}, b: 1 } })
+    ).toStrictEqual(true);
+    expect(deepCompareObjects({ a: {} }, { a: 1 })).toStrictEqual(false);
+    expect(deepCompareObjects({ a: { b: 1 } }, { a: { b: 2 } })).toStrictEqual(
+      false
+    );
+    expect(deepCompareObjects({ a: { b: 1 } }, { a: { b: {} } })).toStrictEqual(
+      false
+    );
+  });
+
+  test("compares arrays", () => {
+    expect(deepCompareObjects([], [])).toStrictEqual(true);
+    expect(deepCompareObjects([1], [1])).toStrictEqual(true);
+    expect(deepCompareObjects([1], [2])).toStrictEqual(false);
+    expect(deepCompareObjects([1], [])).toStrictEqual(false);
+    expect(deepCompareObjects([], [2])).toStrictEqual(false);
+    expect(deepCompareObjects([1, 2], [2, 1])).toStrictEqual(false);
+  });
+
+  test("compares arrays and non-arrays", () => {
+    expect(deepCompareObjects([], {})).toStrictEqual(false);
+    expect(deepCompareObjects([1], { 0: 1 })).toStrictEqual(false);
+    expect(deepCompareObjects([1], null)).toStrictEqual(false);
+  });
+
+  test("compares arrays with objects inside", () => {
+    expect(deepCompareObjects([{}], [{}])).toStrictEqual(true);
+    expect(deepCompareObjects([{ a: 1 }], [{ a: 1 }])).toStrictEqual(true);
+    expect(deepCompareObjects([{}], [{}, {}])).toStrictEqual(false);
+    expect(deepCompareObjects([{}], [{}, null])).toStrictEqual(false);
+    expect(deepCompareObjects([{}, {}], [{}])).toStrictEqual(false);
+    expect(deepCompareObjects([{}, null], [{}])).toStrictEqual(false);
+    expect(deepCompareObjects([{ a: 1 }], [{ a: 1 }, { a: 1 }])).toStrictEqual(
+      false
+    );
   });
 });
