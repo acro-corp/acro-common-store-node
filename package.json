@@ -1,6 +1,6 @@
 {
   "name": "@acro-sdk/common-store",
-  "version": "0.0.4",
+  "version": "0.0.0",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.mjs",
@@ -11,7 +11,7 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "rename:esm": "/bin/zsh ./scripts/fix-mjs.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
