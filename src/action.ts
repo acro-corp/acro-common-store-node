@@ -65,6 +65,34 @@ const ActionSchema = z.object({
       headers: z.record(z.string(), z.any()).optional(),
     })
     .optional(),
+  changes: z
+    .array(
+      z.object({
+        model: z.string(),
+        id: z.string(),
+        path: z.string().optional(),
+        from: z.any().optional(),
+        to: z.any(),
+        meta: z.record(z.string(), z.any()).optional(),
+      })
+    )
+    .optional(),
+  cost: z
+    .object({
+      amount: z.number(),
+      currency: z.string(),
+      components: z
+        .array(
+          z.object({
+            type: z.string().optional(),
+            key: z.string(),
+            amount: z.number(),
+          })
+        )
+        .optional(),
+      meta: z.record(z.string(), z.any()).optional(),
+    })
+    .optional(),
   meta: z.record(z.string(), z.any()).optional(),
 });
 
