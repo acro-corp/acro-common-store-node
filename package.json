@@ -1,0 +1,28 @@
+{
+  "name": "@acro-sdk/common-store",
+  "version": "0.0.4",
+  "description": "",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && npm run rename:esm",
+    "rename:esm": "/bin/zsh ../../scripts/fix-mjs.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "LGPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "esbuild": "^0.23.1",
+    "esbuild-plugin-tsc": "^0.4.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
