@@ -21,9 +21,14 @@
     "esbuild": "^0.23.1",
     "esbuild-plugin-tsc": "^0.4.0",
     "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "vitest": "^2.0.5",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.3",
+    "prettier": "^3.2.5",
+    "prettier-eslint": "^16.3.0"
   },
   "dependencies": {
+    "@acro-sdk/mask": "^0.0.4",
     "zod": "^3.23.8"
   }
 }

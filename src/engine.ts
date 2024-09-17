@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { AcroMask, MaskLevel } from "@acro-sdk/mask";
 import {
   Action,
   ActionSchema,
@@ -34,7 +35,19 @@ abstract class Engine<DbAction> {
 
   logger: Logger;
 
-  constructor(options: { logger?: Function; logLevel?: LogLevel }) {
+  // readonly mask
+  roMask: AcroMask;
+  // writeonly mask
+  woMask: AcroMask;
+
+  constructor(options: {
+    logger?: Function;
+    logLevel?: LogLevel;
+    mask: {
+      removeFields?: string[];
+      saveFields?: string[];
+    };
+  }) {
     if (options?.logLevel) {
       this._logLevel = options?.logLevel;
     }
@@ -53,6 +66,18 @@ abstract class Engine<DbAction> {
       trace: this.log.bind(this, LogLevel.trace),
       all: this.log.bind(this, LogLevel.all),
     };
+
+    this.roMask = new AcroMask({
+      maskLevel: MaskLevel.HIDE,
+      logger: options.logger,
+      logLevel: options.logLevel,
+    });
+
+    this.woMask = new AcroMask({
+      maskLevel: MaskLevel.REMOVE,
+      logger: options.logger,
+      logLevel: options.logLevel,
+    });
   }
 
   /**
@@ -115,7 +140,7 @@ abstract class Engine<DbAction> {
    */
   abstract findMany(
     options?: FindActionOptions,
-    filters?: FindActionFilters
+    filters?: FindActionFilters,
   ): Promise<DbAction[]>;
 
   // ------------------------------------------------------------------------------------
@@ -146,9 +171,9 @@ abstract class Engine<DbAction> {
     return Promise.all(
       (
         await this.createMany(
-          await Promise.all(actions.map((action) => this.serialize(action)))
+          await Promise.all(actions.map((action) => this.serialize(action))),
         )
-      ).map((dbAction) => this.deserialize(dbAction))
+      ).map((dbAction) => this.deserialize(dbAction)),
     );
   }
 
@@ -170,7 +195,7 @@ abstract class Engine<DbAction> {
    */
   async findManyActions(
     options?: FindActionOptions,
-    filters?: FindActionFilters
+    filters?: FindActionFilters,
   ): Promise<Action[]> {
     const actions = await this.findMany(options, filters);
 
