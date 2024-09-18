@@ -115,37 +115,78 @@ const FindActionFiltersSchema = z.object({
   environment: z.string().or(z.array(z.string())).optional(),
   framework: z
     .object({
-      name: z.string().or(z.array(z.string())).optional(),
-      version: z.string().or(z.array(z.string())).optional(),
+      name: z.string().optional(),
+      version: z.string().optional(),
     })
+    .or(
+      z.array(
+        z.object({
+          name: z.string().optional(),
+          version: z.string().optional(),
+        })
+      )
+    )
     .optional(),
   sessionId: z.string().or(z.array(z.string())).optional(),
   traceIds: z.string().or(z.array(z.string())).optional(),
   action: z
     .object({
-      id: z.string().or(z.array(z.string())).optional(),
-      type: z.string().or(z.array(z.string())).optional(),
-      verb: z.string().or(z.array(z.string())).optional(),
-      object: z.string().or(z.array(z.string())).optional(),
+      id: z.string().optional(),
+      type: z.string().optional(),
+      verb: z.string().optional(),
+      object: z.string().optional(),
     })
+    .or(
+      z.array(
+        z.object({
+          id: z.string().optional(),
+          type: z.string().optional(),
+          verb: z.string().optional(),
+          object: z.string().optional(),
+        })
+      )
+    )
     .optional(),
   agents: z
     .object({
-      id: z.string().or(z.array(z.string())).optional(),
-      type: z.string().or(z.array(z.string())).optional(),
-      name: z.string().or(z.array(z.string())).optional(),
-      meta: z.record(z.string(), z.string().or(z.array(z.string()))).optional(),
+      id: z.string().optional(),
+      type: z.string().optional(),
+      name: z.string().optional(),
+      meta: z.record(z.string(), z.string()).optional(),
     })
+    .or(
+      z.array(
+        z.object({
+          id: z.string().optional(),
+          type: z.string().optional(),
+          name: z.string().optional(),
+          meta: z.record(z.string(), z.string()).optional(),
+        })
+      )
+    )
     .optional(),
   targets: z
     .object({
-      id: z.string().or(z.array(z.string())).optional(),
-      type: z.string().or(z.array(z.string())).optional(),
-      name: z.string().or(z.array(z.string())).optional(),
-      meta: z.record(z.string(), z.string().or(z.array(z.string()))).optional(),
+      id: z.string().optional(),
+      type: z.string().optional(),
+      name: z.string().optional(),
+      meta: z.record(z.string(), z.string()).optional(),
     })
+    .or(
+      z.array(
+        z.object({
+          id: z.string().optional(),
+          type: z.string().optional(),
+          name: z.string().optional(),
+          meta: z.record(z.string(), z.string()).optional(),
+        })
+      )
+    )
     .optional(),
-  request: z.record(z.string(), z.string().or(z.array(z.string()))).optional(),
+  request: z
+    .record(z.string(), z.string())
+    .or(z.array(z.record(z.string(), z.string())))
+    .optional(),
   response: z
     .object({
       status: z.string().or(z.array(z.string())).optional(),
@@ -155,13 +196,44 @@ const FindActionFiltersSchema = z.object({
           lt: z.number().optional(),
         })
         .optional(),
-      body: z.record(z.string(), z.string().or(z.array(z.string()))).optional(),
+      body: z
+        .record(z.string(), z.string())
+        .or(z.array(z.record(z.string(), z.string())))
+        .optional(),
       headers: z
-        .record(z.string(), z.string().or(z.array(z.string())))
+        .record(z.string(), z.string())
+        .or(z.array(z.record(z.string(), z.string())))
         .optional(),
     })
     .optional(),
-  meta: z.record(z.string(), z.string().or(z.array(z.string()))).optional(),
+  changes: z
+    .object({
+      model: z.string().optional(),
+      operation: z.string().optional(),
+      id: z.string().optional(),
+      path: z.string().optional(),
+      before: z.any().optional(),
+      after: z.any().optional(),
+      meta: z.record(z.string(), z.string()).optional(),
+    })
+    .or(
+      z.array(
+        z.object({
+          model: z.string().optional(),
+          operation: z.string().optional(),
+          id: z.string().optional(),
+          path: z.string().optional(),
+          before: z.any().optional(),
+          after: z.any().optional(),
+          meta: z.record(z.string(), z.string()).optional(),
+        })
+      )
+    )
+    .optional(),
+  meta: z
+    .record(z.string(), z.string())
+    .or(z.array(z.record(z.string(), z.string())))
+    .optional(),
 });
 
 type Action = z.infer<typeof ActionSchema>;
