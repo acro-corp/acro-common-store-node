@@ -184,8 +184,12 @@ const FindActionFiltersSchema = z.object({
     )
     .optional(),
   request: z
-    .record(z.string(), z.string())
-    .or(z.array(z.record(z.string(), z.string())))
+    .record(z.string(), z.string().or(z.record(z.string(), z.string())))
+    .or(
+      z.array(
+        z.record(z.string(), z.string().or(z.record(z.string(), z.string())))
+      )
+    )
     .optional(),
   response: z
     .object({
